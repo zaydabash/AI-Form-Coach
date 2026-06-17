@@ -8,21 +8,27 @@ import { useFormSession } from "./hooks/useFormSession.js";
 import { setAccessCode, getAccessCode } from "./api.js";
 
 export default function App() {
-  const [view, setView] = useState("live");
+  const [view, setView] = useState("live"); // which screen renders
+  const [nav, setNav] = useState("skeleton"); // active nav item id
   const [needCode, setNeedCode] = useState(false);
 
   const session = useFormSession({ onNeedCode: () => setNeedCode(true) });
   const { running, busy, state, reps, summary, error, start, stop, videoRef, canvasRef } = session;
 
+  const navigate = useCallback((targetView, navId) => {
+    setView(targetView);
+    setNav(navId);
+  }, []);
+
   const onToggleSession = useCallback(async () => {
     if (running) {
       const s = await stop();
-      if (s) setView("summary");
+      if (s) navigate("summary", "load");
     } else {
-      setView("live");
+      navigate("live", "skeleton");
       await start();
     }
-  }, [running, start, stop]);
+  }, [running, start, stop, navigate]);
 
   // Dev/offline preview: ?demo=1 seeds mock data for all three screens.
   useEffect(() => {
@@ -47,7 +53,7 @@ export default function App() {
   return (
     <>
       <EtherealShadow />
-      <Shell view={view} setView={setView} running={running} busy={busy} onToggleSession={onToggleSession}>
+      <Shell view={view} nav={nav} onNavigate={navigate} running={running} busy={busy} onToggleSession={onToggleSession}>
         {error && (
           <div className="mx-margin-lg mt-margin-md px-4 py-3 border border-error/40 bg-error/10 text-[#fecdd3] font-label-sm uppercase tracking-wide flex items-center gap-2">
             <span className="material-symbols-outlined text-base">warning</span>
@@ -57,7 +63,7 @@ export default function App() {
         {view === "live" && (
           <LiveCoachHub running={running} state={state} reps={reps} videoRef={videoRef} canvasRef={canvasRef} />
         )}
-        {view === "history" && <HistoryDashboard onOpenSummary={() => setView("summary")} />}
+        {view === "history" && <HistoryDashboard onOpenSummary={() => navigate("summary", "load")} />}
         {view === "summary" && <SessionSummary summary={summary} reps={reps} />}
       </Shell>
 

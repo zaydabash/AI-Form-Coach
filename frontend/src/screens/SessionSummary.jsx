@@ -125,7 +125,7 @@ export default function SessionSummary({ summary, reps }) {
         <div className="glass-pane md:col-span-4 flex flex-col">
           <div className="p-pane-padding border-b border-white/10 flex justify-between items-center bg-white/5">
             <span className="font-label-sm uppercase tracking-widest">AI Diagnostics</span>
-            <span className="font-label-sm text-[10px] text-primary px-2 py-0.5 border border-primary/40">CLAUDE</span>
+            <span className="font-label-sm text-[10px] text-primary px-2 py-0.5 border border-primary/40">AI</span>
           </div>
           <div className="flex-1 overflow-y-auto">
             {diagnostics.map((d) => (
@@ -206,7 +206,7 @@ export default function SessionSummary({ summary, reps }) {
 
       {/* Coach takeaway + footer */}
       <div className="glass-pane p-pane-padding">
-        <div className="font-label-sm uppercase tracking-widest text-on-surface-variant mb-2">Claude Session Takeaway</div>
+        <div className="font-label-sm uppercase tracking-widest text-on-surface-variant mb-2">Session Takeaway</div>
         <p className="font-body-md text-on-surface/80 leading-relaxed italic">{summary.summary}</p>
       </div>
       <footer className="glass-pane p-pane-padding flex justify-between items-center">
@@ -215,7 +215,7 @@ export default function SessionSummary({ summary, reps }) {
         </button>
         <div className="font-label-sm text-[10px] text-on-surface-variant/40 flex gap-4 uppercase">
           <span>FormIQ v1.0</span>
-          <span>Powered by Claude</span>
+          <span>Powered by AI</span>
         </div>
       </footer>
     </div>

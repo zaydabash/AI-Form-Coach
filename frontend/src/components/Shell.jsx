@@ -1,24 +1,30 @@
 // App shell: sticky top nav + fixed left sidebar, shared by every screen.
 // Ported from the Stitch "Restored Technical" layout.
+//
+// The app has three real screens (live / history / summary). Each nav item maps
+// to one of them; `nav` is the id of the active item so highlighting is exact
+// even when two items open the same screen (e.g. Skeleton Tracking + Joint
+// Angles both show the live view).
 
 const TOP_LINKS = [
-  ["live", "Live Coach"],
-  ["history", "Session History"],
-  ["summary", "Session Summary"],
+  { id: "skeleton", label: "Live Coach", view: "live" },
+  { id: "dashboard", label: "Session History", view: "history" },
+  { id: "load", label: "Session Summary", view: "summary" },
 ];
 
 const SIDE_LINKS = [
-  ["dashboard", "Dashboard"],
-  ["accessibility_new", "Skeleton Tracking"],
-  ["architecture", "Joint Angles"],
-  ["fitness_center", "Load Analysis"],
+  { id: "dashboard", icon: "dashboard", label: "Dashboard", view: "history" },
+  { id: "skeleton", icon: "accessibility_new", label: "Skeleton Tracking", view: "live" },
+  { id: "angles", icon: "architecture", label: "Joint Angles", view: "live" },
+  { id: "load", icon: "fitness_center", label: "Load Analysis", view: "summary" },
+  { id: "history", icon: "history", label: "History", view: "history" },
 ];
 
 function Icon({ name, className = "" }) {
   return <span className={`material-symbols-outlined ${className}`}>{name}</span>;
 }
 
-export default function Shell({ view, setView, running, busy, onToggleSession, children }) {
+export default function Shell({ view, nav, onNavigate, running, busy, onToggleSession, children }) {
   return (
     <div className="min-h-screen bg-transparent text-on-surface">
       {/* Top nav */}
@@ -27,17 +33,17 @@ export default function Shell({ view, setView, running, busy, onToggleSession, c
           FormIQ
         </div>
         <div className="hidden md:flex items-center gap-8 h-full">
-          {TOP_LINKS.map(([id, label]) => (
+          {TOP_LINKS.map((link) => (
             <button
-              key={id}
-              onClick={() => setView(id)}
+              key={link.id}
+              onClick={() => onNavigate(link.view, link.id)}
               className={`font-body-md text-body-md transition-all duration-300 px-2 ${
-                view === id
+                view === link.view
                   ? "text-primary border-b border-primary pb-1"
                   : "text-on-surface/60 hover:text-primary"
               }`}
             >
-              {label}
+              {link.label}
             </button>
           ))}
         </div>
@@ -58,36 +64,20 @@ export default function Shell({ view, setView, running, busy, onToggleSession, c
           </div>
 
           <nav className="flex-1">
-            {SIDE_LINKS.map(([icon, label], i) => (
-              <a
-                key={label}
-                href="#"
-                onClick={(e) => e.preventDefault()}
-                className={`flex items-center gap-3 px-6 py-3.5 transition-all duration-300 font-label-sm uppercase tracking-widest ${
-                  i === 1 && view === "live"
+            {SIDE_LINKS.map((link) => (
+              <button
+                key={link.id}
+                onClick={() => onNavigate(link.view, link.id)}
+                className={`w-full text-left flex items-center gap-3 px-6 py-3.5 transition-all duration-300 font-label-sm uppercase tracking-widest ${
+                  nav === link.id
                     ? "bg-white/5 text-primary border-r-2 border-primary"
                     : "text-on-surface/60 hover:bg-white/5"
                 }`}
               >
-                <Icon name={icon} className="text-lg" />
-                {label}
-              </a>
+                <Icon name={link.icon} className="text-lg" />
+                {link.label}
+              </button>
             ))}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setView("history");
-              }}
-              className={`flex items-center gap-3 px-6 py-3.5 transition-all duration-300 font-label-sm uppercase tracking-widest ${
-                view === "history"
-                  ? "bg-white/5 text-primary border-r-2 border-primary"
-                  : "text-on-surface/60 hover:bg-white/5"
-              }`}
-            >
-              <Icon name="history" className="text-lg" />
-              History
-            </a>
           </nav>
 
           <div className="p-4 border-t border-white/5">
@@ -95,9 +85,7 @@ export default function Shell({ view, setView, running, busy, onToggleSession, c
               onClick={onToggleSession}
               disabled={busy}
               className={`w-full py-3.5 font-label-sm uppercase tracking-widest transition-all duration-300 disabled:opacity-50 ${
-                running
-                  ? "btn-technical text-error"
-                  : "bg-primary text-on-primary technical-glow"
+                running ? "btn-technical text-error" : "bg-primary text-on-primary technical-glow"
               }`}
             >
               {busy ? "···" : running ? "End Session" : "Start Session"}

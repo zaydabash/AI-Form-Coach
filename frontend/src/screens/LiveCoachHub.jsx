@@ -131,7 +131,7 @@ export default function LiveCoachHub({ running, state, reps, videoRef, canvasRef
         <div className="flex-1 flex flex-col justify-center self-stretch border-l border-white/5 pl-margin-lg py-2">
           <div className="flex items-center gap-2 mb-2">
             <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
-            <span className="font-label-sm text-primary tracking-widest uppercase">Claude AI Coach</span>
+            <span className="font-label-sm text-primary tracking-widest uppercase">AI Coach</span>
           </div>
           <div className="font-body-md text-on-surface/80 leading-relaxed max-w-4xl italic">
             {latest
