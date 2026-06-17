@@ -19,17 +19,6 @@ is optional.
 - Access gate + rate limiting, shared passcode and per-IP request cap to protect API spend.
 - Single-image deploy, one container serves the app and the API.
 
-## External APIs / services
-Service	What it does	Where
-LLM API (models)	The coaching brain: vision call per rep (fast model) + deeper text call for the session summary	backend coach.py
-MediaPipe Tasks  PoseLandmarker	Pose/skeleton tracking. WASM build in the browser (web app); Python build in the local backend	frontend/src/pose/, backend/pose.py
-Deepgram TTS (/v1/speak REST)	Synthesizes the spoken coaching audio	voice.py
-Browser getUserMedia	Camera capture (browser-side, so video never leaves the device)	useFormSession.js
-WebGL + Canvas 2D	Animated background shader and the skeleton overlay drawing	EtherealShadow.jsx, poseEngine.js
-Key libraries
-Backend: FastAPI + Uvicorn (API), SDK, requests (Deepgram), and in the local mode OpenCV + MediaPipe.
-Frontend: React + Vite, Tailwind, recharts (the improvement curve), @mediapipe/tasks-vision (in-browser pose).
-Deploy: Docker, runs on a Hugging Face Space (also has a Render blueprint).
 
 ## Screens
 
