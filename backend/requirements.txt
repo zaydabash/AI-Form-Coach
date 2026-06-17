@@ -1,0 +1,26 @@
+# FormIQ backend dependencies
+# MediaPipe currently requires numpy<2, so pin it to avoid the OpenCV/MediaPipe
+# ABI mismatch you get with numpy 2.x.
+numpy>=1.26,<2.0
+
+# Web framework + server
+fastapi>=0.110
+uvicorn[standard]>=0.29
+
+# Computer vision + pose
+# MediaPipe 0.10.35 removed the legacy mp.solutions API; pose.py uses the
+# Tasks API (PoseLandmarker), which needs a pose_landmarker.task model file
+# (see README — fetched at setup, not bundled).
+opencv-python>=4.9
+mediapipe>=0.10.35
+
+# Claude coaching brain
+anthropic>=0.40
+
+# Deepgram TTS via REST
+requests>=2.31
+
+# Arize Phoenix tracing (optional at runtime — backend degrades gracefully)
+arize-phoenix>=4.0
+arize-phoenix-otel>=0.5
+openinference-instrumentation-anthropic>=0.1

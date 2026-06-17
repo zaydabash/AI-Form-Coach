@@ -1,0 +1,6 @@
+# FormIQ cloud API — slim, no OpenCV/MediaPipe (browser handles vision).
+fastapi>=0.110
+uvicorn[standard]>=0.29
+anthropic>=0.40
+requests>=2.31
+pydantic>=2.0

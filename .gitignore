@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Env / secrets
+.env
+.env.local
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Phoenix / traces
+.phoenix/
+
+# MediaPipe model (downloaded at setup, ~5.5MB binary)
+backend/models/*.task
+
+# OS
+.DS_Store
+
+# Claude / spec-kit local credentials
+.claude/settings.local.json
+.gstack/
