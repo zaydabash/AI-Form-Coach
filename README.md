@@ -7,6 +7,30 @@ is optional.
 
 ![FormIQ](docs/preview.png)
 
+## Features
+- Live form coaching: webcam feed with a real-time skeleton overlay and a phase indicator (up/down).
+- Pose + joint-angle tracking: 33 body landmarks per frame; computes both elbow angles, both shoulder angles, both hip angles, elbow symmetry (L/R divergence), and body-planarity deviation (how far the torso sags/pikes off the head-to-ankle line).
+- Rep detection: an up → down -> up state machine with hysteresis (down below 90° elbow, up above 150°), so jitter near a single threshold doesn't double-count.
+- Per-rep AI coaching: at each completed rep it sends the frame + angles to an LLM and gets back a 0–100 form score, 2–3 specific corrections, and one encouragement line.
+- Spoken feedback: optional text-to-speech that reads the coaching aloud.
+- Session summary average score: an improvement curve over the set, AI diagnostics (depth / symmetry / planarity graded optimal/minor/critical), and a best-rep breakdown.
+- Session history dashboard.
+- 3-screen console UI with nav (Live Coach, Session History, Session Summary).
+- Access gate + rate limiting, shared passcode and per-IP request cap to protect API spend.
+- Single-image deploy, one container serves the app and the API.
+
+## External APIs / services
+Service	What it does	Where
+LLM API (models)	The coaching brain: vision call per rep (fast model) + deeper text call for the session summary	backend coach.py
+MediaPipe Tasks  PoseLandmarker	Pose/skeleton tracking. WASM build in the browser (web app); Python build in the local backend	frontend/src/pose/, backend/pose.py
+Deepgram TTS (/v1/speak REST)	Synthesizes the spoken coaching audio	voice.py
+Browser getUserMedia	Camera capture (browser-side, so video never leaves the device)	useFormSession.js
+WebGL + Canvas 2D	Animated background shader and the skeleton overlay drawing	EtherealShadow.jsx, poseEngine.js
+Key libraries
+Backend: FastAPI + Uvicorn (API), SDK, requests (Deepgram), and in the local mode OpenCV + MediaPipe.
+Frontend: React + Vite, Tailwind, recharts (the improvement curve), @mediapipe/tasks-vision (in-browser pose).
+Deploy: Docker, runs on a Hugging Face Space (also has a Render blueprint).
+
 ## Screens
 
 - Live Coach: webcam feed with a skeleton overlay, a live telemetry panel
