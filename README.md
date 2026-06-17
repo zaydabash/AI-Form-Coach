@@ -5,6 +5,8 @@ browser, the joint angles drive a rep detector, and an AI vision model scores
 each rep with specific corrections and a line of encouragement. Spoken feedback
 is optional.
 
+![FormIQ](docs/preview.png)
+
 ## Screens
 
 - Live Coach: webcam feed with a skeleton overlay, a live telemetry panel
