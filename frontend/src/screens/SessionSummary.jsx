@@ -22,7 +22,7 @@ function diagnose(reps) {
 }
 
 function fmtDuration(reps) {
-  if (reps.length < 2) return "—";
+  if (reps.length < 2) return "-";
   const s = Math.max(0, reps[reps.length - 1].timestamp - reps[0].timestamp);
   const m = Math.floor(s / 60);
   return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -45,7 +45,7 @@ export default function SessionSummary({ summary, reps }) {
         <div className="glass-pane p-8 text-center">
           <span className="material-symbols-outlined text-4xl text-primary/40">monitoring</span>
           <p className="font-label-sm uppercase tracking-widest text-on-surface/50 mt-3">
-            No session data — finish a session to generate a summary
+            No session data - finish a session to generate a summary
           </p>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function SessionSummary({ summary, reps }) {
         <div className="glass-pane p-pane-padding">
           <div className="font-label-sm uppercase text-on-surface-variant mb-2">Session Duration</div>
           <div className="font-data-lg text-headline-lg text-primary">{fmtDuration(reps)}</div>
-          <div className="font-label-sm text-on-surface-variant mt-2 uppercase">{summary.focus_next_session || "—"}</div>
+          <div className="font-label-sm text-on-surface-variant mt-2 uppercase">{summary.focus_next_session || "-"}</div>
         </div>
       </div>
 
@@ -178,7 +178,7 @@ export default function SessionSummary({ summary, reps }) {
           </div>
         </div>
 
-        {/* Best rep panel (no video — real metrics in the technical frame) */}
+        {/* Best rep panel (no video - real metrics in the technical frame) */}
         <div className="glass-pane md:col-span-8 p-pane-padding relative min-h-[280px]">
           <div className="z-10 relative">
             <div className="font-label-sm uppercase tracking-widest text-on-surface-variant">
@@ -197,9 +197,9 @@ export default function SessionSummary({ summary, reps }) {
             <div className="w-24 h-24 border border-primary" />
           </div>
           <div className="absolute bottom-4 left-4 grid grid-cols-3 gap-6">
-            <BestMetric label="Bottom Elbow" value={best ? `${best.bottom_elbow_angle}°` : "—"} />
-            <BestMetric label="Elbow Sym" value={best ? `${best.elbow_symmetry}°` : "—"} />
-            <BestMetric label="Latency" value={best ? `${Math.round(best.latency_ms)}ms` : "—"} />
+            <BestMetric label="Bottom Elbow" value={best ? `${best.bottom_elbow_angle}°` : "-"} />
+            <BestMetric label="Elbow Sym" value={best ? `${best.elbow_symmetry}°` : "-"} />
+            <BestMetric label="Latency" value={best ? `${Math.round(best.latency_ms)}ms` : "-"} />
           </div>
         </div>
       </div>

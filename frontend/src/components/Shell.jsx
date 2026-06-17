@@ -1,5 +1,5 @@
 // App shell: sticky top nav + fixed left sidebar, shared by every screen.
-// Ported from the Stitch "Restored Technical" layout.
+// Technical console layout.
 //
 // The app has three real screens (live / history / summary). Each nav item maps
 // to one of them; `nav` is the id of the active item so highlighting is exact

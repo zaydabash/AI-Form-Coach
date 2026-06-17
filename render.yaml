@@ -1,6 +1,6 @@
-# Render Blueprint — ONE service: the Docker image serves both the React app
-# and the coach API. Deploy: push to GitHub, then render.com → New → Blueprint
-# → pick this repo, set the secret env vars, deploy. You get a single URL.
+# Render Blueprint. One service: the Docker image serves the React app and the
+# coach API together. Deploy: push to GitHub, then render.com -> New ->
+# Blueprint -> pick this repo, set the env vars, deploy. You get a single URL.
 services:
   - type: web
     name: formiq
@@ -9,15 +9,15 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - key: ANTHROPIC_API_KEY
+      - key: LLM_API_KEY
+        sync: false
+      - key: FORMIQ_REP_MODEL
+        sync: false
+      - key: FORMIQ_SUMMARY_MODEL
         sync: false
       - key: DEEPGRAM_API_KEY
         sync: false
       - key: FORMIQ_ACCESS_CODE
         sync: false
-      - key: FORMIQ_REP_MODEL
-        value: claude-haiku-4-5
-      - key: FORMIQ_SUMMARY_MODEL
-        value: claude-opus-4-8
       - key: FORMIQ_RATE_LIMIT_PER_MIN
         value: "40"

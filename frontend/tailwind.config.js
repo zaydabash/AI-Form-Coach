@@ -1,4 +1,4 @@
-/** FormIQ — "Restored Technical" theme ported from the Stitch design export. */
+/** FormIQ - Technical console theme. */
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],

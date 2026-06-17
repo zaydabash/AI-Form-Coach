@@ -2,12 +2,12 @@
 
 Extracts 33 skeletal landmarks per frame, computes the joint angles that matter
 for pushup form, and produces an annotated frame (skeleton + angle readouts) for
-both the live feed and the vision payload sent to Claude.
+both the live feed and the vision payload sent to the model.
 
 Uses the MediaPipe **Tasks** API (``PoseLandmarker``). The legacy
 ``mp.solutions.pose`` API was removed in MediaPipe 0.10.35, and the Tasks API
 also dropped ``solutions.drawing_utils``, so the skeleton is drawn manually with
-OpenCV. Runs on CPU only — no GPU required.
+OpenCV. Runs on CPU only - no GPU required.
 """
 
 from __future__ import annotations
@@ -77,7 +77,7 @@ class JointAngles:
         return abs(self.left_elbow - self.right_elbow)
 
     def to_dict(self) -> dict:
-        """Compact, JSON-serializable form for the Claude payload and the UI."""
+        """Compact, JSON-serializable form for the model payload and the UI."""
 
         def r(x: Optional[float], n: int = 1) -> Optional[float]:
             return round(x, n) if x is not None else None

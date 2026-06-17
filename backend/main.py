@@ -1,10 +1,10 @@
 """FastAPI app for FormIQ.
 
 Orchestrates the pipeline: webcam capture -> MediaPipe pose -> rep detection ->
-Claude Opus 4.8 coaching -> Deepgram TTS, with Phoenix tracing throughout.
+model coaching -> text-to-speech, with Phoenix tracing throughout.
 
 Architecture note: a single background thread owns the webcam and runs pose +
-rep detection at ~15fps. When a rep completes, the (slower, ~1-2s) Claude call is
+rep detection at ~15fps. When a rep completes, the (slower, ~1-2s) model call is
 handed off to a thread pool so frame capture never blocks. Coaching results land
 in a shared, lock-protected list that the frontend polls.
 
@@ -16,7 +16,7 @@ Endpoints:
     GET  /state            live joint angles + rep count + phase (poll ~10Hz)
     GET  /reps             all completed reps with coaching (poll ~4Hz)
     GET  /rep-complete     coaching for the most recently completed rep
-    GET  /session-summary  final Claude analysis over the full rep history
+    GET  /session-summary  final analysis over the full rep history
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from voice import Voice
 WEBCAM_INDEX = int(os.getenv("FORMIQ_WEBCAM_INDEX", "0"))
 TARGET_FPS = int(os.getenv("FORMIQ_TARGET_FPS", "15"))
 JPEG_QUALITY = int(os.getenv("FORMIQ_JPEG_QUALITY", "80"))
-# The coaching call gets a downscaled frame — vision latency scales with image
+# The coaching call gets a downscaled frame - vision latency scales with image
 # size, and 512px is plenty for form assessment. The live feed stays full-res.
 COACH_IMG_MAX_EDGE = int(os.getenv("FORMIQ_COACH_IMG_MAX_EDGE", "512"))
 COACH_JPEG_QUALITY = int(os.getenv("FORMIQ_COACH_JPEG_QUALITY", "75"))
@@ -60,7 +60,7 @@ def _encode_for_coach(frame) -> Optional[str]:
 
 @dataclass
 class RepResult:
-    """A completed rep plus its coaching — the unit the frontend renders."""
+    """A completed rep plus its coaching - the unit the frontend renders."""
 
     rep_number: int
     form_score: int
@@ -145,7 +145,7 @@ class Session:
                 elbow_symmetry=result.angles.elbow_symmetry,
             )
             if event is not None:
-                # Hand the Claude call to the pool so capture keeps flowing.
+                # Hand the model call to the pool so capture keeps flowing.
                 frame_b64 = _encode_for_coach(result.annotated_frame)
                 if frame_b64:
                     angles_payload = {

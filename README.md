@@ -1,109 +1,85 @@
-# FormIQ — AI Fitness Form Coach
+# FormIQ
 
-Real-time pushup form coaching. Your webcam feeds MediaPipe Pose, joint angles
-drive a rep detector, and **Claude Opus 4.8** acts as a vision-based coaching
-brain — scoring each rep, giving specific corrections, and speaking them aloud
-via Deepgram TTS. Every coaching call is traced with Arize Phoenix.
+FormIQ is a real-time pushup form coach. Your webcam runs pose tracking in the
+browser, the joint angles drive a rep detector, and an AI vision model scores
+each rep with specific corrections and a line of encouragement. Spoken feedback
+is optional.
+
+## Screens
+
+- Live Coach: webcam feed with a skeleton overlay, a live telemetry panel
+  (joint angles, symmetry, rep count), and a coaching bar.
+- Session History: a dashboard of past sessions and aggregate stats.
+- Session Summary: an improvement curve, derived diagnostics, and a best-rep
+  breakdown for the session you just finished.
+
+## How it works
 
 ```
-webcam → OpenCV → MediaPipe Pose → joint angles → rep detection
-                                                      │
-                                          Claude Opus 4.8 (vision)
-                                                      │
-                          form score + corrections + encouragement
-                                                      │
-                                    Deepgram TTS (spoken)  ·  Phoenix (traced)
+browser webcam -> pose tracking (WASM) -> joint angles -> rep detection
+                                                            |
+                                           coach API: AI vision model
+                                                            |
+                            form score + corrections + encouragement
 ```
 
-## Architecture
+The browser captures the camera and runs pose tracking and rep detection
+locally, so no video ever leaves the device. When a rep completes, the annotated
+frame and joint angles are sent to a small stateless API that returns the
+coaching verdict.
 
-| Module | Responsibility |
-|--------|----------------|
-| `backend/pose.py` | MediaPipe wrapper: 33 landmarks → elbow/shoulder/hip angles + body planarity; annotated frame |
-| `backend/reps.py` | up→down→up rep state machine with hysteresis |
-| `backend/coach.py` | Claude Opus 4.8 vision call → form score, corrections, encouragement |
-| `backend/voice.py` | Deepgram TTS, non-blocking playback |
-| `backend/tracer.py` | Arize Phoenix / OpenTelemetry setup (degrades to no-op) |
-| `backend/main.py` | FastAPI app + background capture loop |
-| `frontend/` | React + recharts UI: live feed, angle readouts, coaching, rep curve |
+Rep detection uses the mean elbow angle with hysteresis:
 
-The webcam → pose → rep-detection loop runs on a background thread at ~15fps.
-When a rep completes, the slower (~1–2s) Claude call is dispatched to a thread
-pool so frame capture never stalls — keeping the feedback loop near the sub-2s
-target.
+- down when the elbow angle drops below 90 degrees
+- up when it rises above 150 degrees
+- a rep counts on a full up -> down -> up transition
 
-## Rep detection
+Per rep it tracks form score, elbow symmetry, and body-planarity deviation.
 
-Driven by mean elbow angle with hysteresis:
+## Project layout
 
-- **down** when elbow angle < 90°
-- **up** when elbow angle > 150°
-- a rep counts on a full **up → down → up** transition
+| Path | Responsibility |
+|------|----------------|
+| `frontend/` | React + Vite app. Browser camera, pose tracking, rep detection, and the three-screen UI. |
+| `frontend/src/pose/` | Pose engine (WASM), joint-angle math, and the rep state machine. |
+| `web-backend/` | Stateless FastAPI coach API (`/coach`, `/summary`, `/speak`). Also serves the built frontend in the single-image deploy. |
+| `backend/` | Alternate local mode that runs pose tracking server-side from a local webcam. |
 
-Per rep we track form score, elbow symmetry, and body-planarity deviation.
+## Run locally
 
-## Setup
-
-### 1. Backend
+The coach API and the frontend run separately in dev.
 
 ```bash
-cd backend
+# API
+cd web-backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Download the MediaPipe pose model (Tasks API needs this; ~5.5MB, not bundled)
-mkdir -p models
-curl -L -o models/pose_landmarker.task \
-  https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task
-
-cp ../.env.example ../.env   # then fill in ANTHROPIC_API_KEY (+ DEEPGRAM_API_KEY)
+cp ../.env.example ../.env   # fill in LLM_API_KEY + model ids
 set -a && source ../.env && set +a
+uvicorn server:app --port 8009
 
-# Optional: local Phoenix for traces (http://localhost:6006)
-# pip install arize-phoenix && phoenix serve &
-
-uvicorn main:app --reload --port 8000
-```
-
-> On macOS, grant your terminal **Camera** permission (System Settings →
-> Privacy & Security → Camera) or webcam capture will fail silently.
-
-### 2. Frontend
-
-```bash
+# Frontend (new terminal)
 cd frontend
 npm install
-npm run dev      # http://localhost:5173
+npm run dev   # http://localhost:5173
 ```
 
-Open the UI, click **Start session**, and do pushups facing the camera from the
-side so your full body (head → ankles) is visible.
+Open the app, click Start Session, allow camera access, and do pushups facing
+the camera from the side so your full body is visible. Camera access requires
+HTTPS or localhost.
 
-## API
+## Deploy
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| POST | `/start-session` | open webcam, start capture loop |
-| POST | `/stop-session` | stop and release the webcam |
-| GET | `/frame` | latest annotated frame (single JPEG) |
-| GET | `/video` | annotated MJPEG stream (used by the live feed) |
-| GET | `/state` | live joint angles + rep count + phase |
-| GET | `/reps` | all completed reps with coaching |
-| GET | `/rep-complete` | coaching for the most recent rep |
-| GET | `/session-summary` | final Claude analysis over the session |
+FormIQ ships as a single Docker image (the API serves the built frontend on the
+same origin). See [DEPLOY.md](DEPLOY.md).
 
 ## Environment variables
 
-| Variable | Required | Default |
-|----------|----------|---------|
-| `ANTHROPIC_API_KEY` | ✅ | — |
-| `DEEPGRAM_API_KEY` | optional (silent without it) | — |
-| `ARIZE_PHOENIX_ENDPOINT` | optional | `http://localhost:6006` |
-| `ANTHROPIC_MODEL` | optional | `claude-opus-4-8` |
-| `FORMIQ_WEBCAM_INDEX` | optional | `0` |
-| `FORMIQ_TARGET_FPS` | optional | `15` |
-
-## Notes
-
-- MediaPipe runs on CPU — no GPU needed. It pins `numpy<2`.
-- Tracing, TTS, and Phoenix are all optional; the workout loop runs without them.
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `LLM_API_KEY` | yes | API key for the coaching model provider |
+| `FORMIQ_REP_MODEL` | yes | fast model id, scored per rep |
+| `FORMIQ_SUMMARY_MODEL` | yes | deeper model id, used for the summary |
+| `DEEPGRAM_API_KEY` | no | enables spoken feedback |
+| `FORMIQ_ACCESS_CODE` | no | shared passcode gate for the API |
+| `FORMIQ_RATE_LIMIT_PER_MIN` | no | per-IP request cap (default 40) |

@@ -1,4 +1,4 @@
-// Joint-angle math for FormIQ — ported 1:1 from the Python backend (pose.py).
+// Joint-angle math for FormIQ - ported 1:1 from the Python backend (pose.py).
 // Operates on MediaPipe Tasks landmarks (normalized {x,y,z,visibility}).
 
 export const LM = {

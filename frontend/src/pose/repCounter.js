@@ -1,4 +1,4 @@
-// Pushup rep state machine — ported from the Python backend (reps.py).
+// Pushup rep state machine - ported from the Python backend (reps.py).
 // up -> down -> up counts one rep, with hysteresis between the thresholds.
 
 const DOWN_THRESHOLD = 90;
@@ -45,7 +45,7 @@ export class RepCounter {
       }
       return null;
     }
-    return null; // dead zone — hold phase
+    return null; // dead zone - hold phase
   }
 
   _reset() {

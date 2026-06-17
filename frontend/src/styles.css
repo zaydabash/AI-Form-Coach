@@ -35,7 +35,7 @@ body {
   display: block;
 }
 
-/* Glass pane — translucent slate with edge-lighting, sharp corners */
+/* Glass pane - translucent slate with edge-lighting, sharp corners */
 .glass-pane {
   background: rgba(19, 19, 19, 0.6);
   backdrop-filter: blur(24px);
@@ -48,7 +48,7 @@ body {
   box-shadow: 0 0 20px rgba(161, 161, 170, 0.1);
 }
 
-/* Technical button — 1px outline, cyan-less monochrome glow on hover */
+/* Technical button - 1px outline, cyan-less monochrome glow on hover */
 .btn-technical {
   position: relative;
   overflow: hidden;

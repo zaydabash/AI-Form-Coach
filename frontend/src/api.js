@@ -21,7 +21,7 @@ async function post(path, body) {
     throw e;
   }
   if (res.status === 429) {
-    const e = new Error("Rate limit — slow down a moment.");
+    const e = new Error("Rate limit - slow down a moment.");
     e.code = 429;
     throw e;
   }

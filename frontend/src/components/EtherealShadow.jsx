@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // Animated WebGL "ethereal shadow" background (simplex-noise shadow field).
-// Ported from the Stitch design export. Renders a fixed full-viewport canvas
+// Project design-system layout. Renders a fixed full-viewport canvas
 // behind everything; degrades to the CSS background if WebGL is unavailable.
 const VERT = `attribute vec2 a_position;
 varying vec2 v_texCoord;

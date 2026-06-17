@@ -1,6 +1,6 @@
-// Historical Dashboard — placeholder data. FormIQ has no session-history
+// Historical Dashboard - placeholder data. FormIQ has no session-history
 // backend yet, so these are mock sessions to show the layout. Wire to a real
-// persistence layer later (see scope note in the chat).
+// persistence layer later.
 
 const SESSIONS = [
   { name: "Standard Pushups", date: "Jun 16, 2026 · 09:12", duration: "12:40", reps: 38, stability: 91, tag: "Elite Accuracy", tagCls: "primary", icon: "verified" },
@@ -25,7 +25,7 @@ export default function HistoryDashboard({ onOpenSummary }) {
   return (
     <div className="p-margin-lg space-y-8 relative z-10">
       <div className="text-[10px] font-label-sm uppercase tracking-[0.3em] text-on-surface-variant/40">
-        ⚠ Placeholder data — session history persistence not yet wired to the backend
+        Placeholder data - session history persistence is not wired up yet
       </div>
 
       {/* Overview */}

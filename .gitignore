@@ -14,15 +14,8 @@ node_modules/
 dist/
 .vite/
 
-# Phoenix / traces
-.phoenix/
-
-# MediaPipe model (downloaded at setup, ~5.5MB binary)
+# MediaPipe model (downloaded at setup)
 backend/models/*.task
 
 # OS
 .DS_Store
-
-# Claude / spec-kit local credentials
-.claude/settings.local.json
-.gstack/

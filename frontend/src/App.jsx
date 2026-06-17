@@ -41,13 +41,13 @@ export default function App() {
       left_hip: 168, elbow_symmetry: 7, body_planarity_deviation: 0.042,
     });
     session.setReps([
-      { rep_number: 1, form_score: 58, corrections: ["Go deeper — stop at 90°"], encouragement: "Good start!", bottom_elbow_angle: 104, elbow_symmetry: 14, body_planarity_deviation: 0.071, latency_ms: 2100, timestamp: now - 300 },
+      { rep_number: 1, form_score: 58, corrections: ["Go deeper - stop at 90°"], encouragement: "Good start!", bottom_elbow_angle: 104, elbow_symmetry: 14, body_planarity_deviation: 0.071, latency_ms: 2100, timestamp: now - 300 },
       { rep_number: 2, form_score: 66, corrections: ["Level your hips"], encouragement: "Better depth.", bottom_elbow_angle: 95, elbow_symmetry: 11, body_planarity_deviation: 0.058, latency_ms: 1980, timestamp: now - 250 },
       { rep_number: 3, form_score: 71, corrections: ["Tuck elbows ~45°"], encouragement: "Nice control.", bottom_elbow_angle: 90, elbow_symmetry: 9, body_planarity_deviation: 0.05, latency_ms: 2050, timestamp: now - 180 },
       { rep_number: 4, form_score: 79, corrections: ["Keep core tight"], encouragement: "Strong!", bottom_elbow_angle: 86, elbow_symmetry: 7, body_planarity_deviation: 0.041, latency_ms: 1890, timestamp: now - 90 },
       { rep_number: 5, form_score: 88, corrections: ["Hold the bottom briefly"], encouragement: "Excellent rep!", bottom_elbow_angle: 84, elbow_symmetry: 5, body_planarity_deviation: 0.033, latency_ms: 1960, timestamp: now },
     ]);
-    session.setSummary({ avg_score: 72.4, rep_count: 5, best_rep: 5, summary: "Steady improvement across the set — depth and symmetry both tightened up rep over rep. Keep your hips locked in line from the first rep, not just once you've warmed in.", most_common_error: "Shallow depth early", focus_next_session: "Consistent depth" });
+    session.setSummary({ avg_score: 72.4, rep_count: 5, best_rep: 5, summary: "Steady improvement across the set - depth and symmetry both tightened up rep over rep. Keep your hips locked in line from the first rep, not just once you've warmed in.", most_common_error: "Shallow depth early", focus_next_session: "Consistent depth" });
   }, []); // eslint-disable-line
 
   return (

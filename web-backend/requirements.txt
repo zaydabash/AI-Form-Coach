@@ -1,4 +1,5 @@
-# FormIQ cloud API — slim, no OpenCV/MediaPipe (browser handles vision).
+# FormIQ cloud API dependencies. Slim: no OpenCV/MediaPipe, since the browser
+# handles camera capture and pose tracking.
 fastapi>=0.110
 uvicorn[standard]>=0.29
 anthropic>=0.40

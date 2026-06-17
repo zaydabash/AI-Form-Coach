@@ -1,9 +1,9 @@
-"""FormIQ cloud API — stateless coaching service for the browser client.
+"""FormIQ cloud API - stateless coaching service for the browser client.
 
 The browser does camera capture + MediaPipe pose + rep detection. This service
-only does the things that must stay server-side: the Claude coaching calls and
+only does the things that must stay server-side: the model coaching calls and
 Deepgram TTS (so the API keys never reach the client). No OpenCV, no MediaPipe,
-no webcam — which keeps it light enough for a free Render instance.
+no webcam - which keeps it light enough for a free Render instance.
 
 Endpoints (all gated by a shared passcode header `x-formiq-code`):
     POST /coach     { image_b64, angles, rep_number, phase } -> coaching JSON

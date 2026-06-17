@@ -1,4 +1,4 @@
-# FormIQ — single-image deployment.
+# FormIQ - single-image deployment.
 # Builds the React app, then runs the FastAPI coach API which also serves the
 # built frontend on the same origin. One image, one service, one URL.
 
@@ -8,7 +8,7 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci
 COPY frontend/ ./
-# Same-origin API in prod (api.js defaults to "") — no API base needed.
+# Same-origin API in prod (api.js defaults to "") - no API base needed.
 RUN npm run build
 
 # ---- Stage 2: backend + static ----

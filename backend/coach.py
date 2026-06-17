@@ -1,12 +1,11 @@
-"""Claude Opus 4.8 coaching brain for FormIQ.
+"""Coaching engine for FormIQ.
 
 Takes the annotated frame at the moment a rep completes plus the measured joint
 angles, and returns a structured coaching verdict: a 0-100 form score, 2-3
 specific corrections, and one line of encouragement.
 
 Latency matters (target: sub-2s feedback loop), so the prompt is deliberately
-terse, ``max_tokens`` is small, and we prefill the assistant turn with ``{`` to
-force JSON-only output (no preamble to generate or strip).
+terse, ``max_tokens`` is small, and the model is instructed to return JSON only.
 """
 
 from __future__ import annotations
@@ -22,12 +21,12 @@ import anthropic
 from tracer import get_tracer
 
 # Hybrid model strategy: a fast model for the latency-sensitive per-rep call
-# (sub-2s target) and a deep-reasoning model for the end-of-session summary,
-# where latency doesn't matter. Both overridable via env.
-REP_MODEL = os.getenv("FORMIQ_REP_MODEL", "claude-haiku-4-5")
-SUMMARY_MODEL = os.getenv("FORMIQ_SUMMARY_MODEL", "claude-opus-4-8")
+# (sub-2s target) and a deeper model for the end-of-session summary, where
+# latency doesn't matter. Both are configured via env (see .env.example).
+REP_MODEL = os.getenv("FORMIQ_REP_MODEL", "")
+SUMMARY_MODEL = os.getenv("FORMIQ_SUMMARY_MODEL", "")
 
-# Concise system prompt — every token here is paid on each rep.
+# Concise system prompt - every token here is paid on each rep.
 SYSTEM_PROMPT = (
     "You are FormIQ, an elite calisthenics coach analyzing a single pushup rep "
     "from one image plus measured joint angles. Be specific and actionable. "
@@ -71,7 +70,7 @@ def _fallback(latency_ms: float, reason: str) -> CoachingFeedback:
     """Safe, UI-renderable result when the model call or parse fails."""
     return CoachingFeedback(
         form_score=0,
-        corrections=["Coaching unavailable for this rep — keep your core tight."],
+        corrections=["Coaching unavailable for this rep - keep your core tight."],
         encouragement="Keep going!",
         latency_ms=latency_ms,
         raw=reason,
@@ -91,7 +90,7 @@ def _coerce(payload: dict, latency_ms: float, raw: str) -> CoachingFeedback:
         corrections = [corrections]
     corrections = [str(c).strip() for c in corrections if str(c).strip()][:3]
     if not corrections:
-        corrections = ["No major issues detected — maintain this form."]
+        corrections = ["No major issues detected - maintain this form."]
 
     encouragement = str(payload.get("encouragement") or "Strong work!").strip()
 
@@ -105,11 +104,11 @@ def _coerce(payload: dict, latency_ms: float, raw: str) -> CoachingFeedback:
 
 
 class FormCoach:
-    """Wraps the Anthropic client for per-rep and end-of-session coaching."""
+    """Wraps the model client for per-rep and end-of-session coaching."""
 
     def __init__(self, client: Optional[anthropic.Anthropic] = None) -> None:
-        # Client reads ANTHROPIC_API_KEY from the environment.
-        self._client = client or anthropic.Anthropic()
+        # API key is read from the environment.
+        self._client = client or anthropic.Anthropic(api_key=os.getenv("LLM_API_KEY"))
         self._tracer = get_tracer()
 
     def coach_rep(

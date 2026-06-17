@@ -1,5 +1,5 @@
 function fmt(v, unit = "", dp = 1) {
-  if (v === null || v === undefined) return "—";
+  if (v === null || v === undefined) return "-";
   return `${v.toFixed(dp)}${unit}`;
 }
 const pct = (v, max) => Math.max(0, Math.min(100, (v / max) * 100));
@@ -28,7 +28,7 @@ export default function LiveCoachHub({ running, state, reps, videoRef, canvasRef
       ? (state.left_elbow + state.right_elbow) / 2
       : state.left_elbow ?? null;
   const latest = reps.length ? reps[reps.length - 1] : null;
-  const phaseLabel = state.pose_found ? (state.phase || "—").toUpperCase() : "NO POSE";
+  const phaseLabel = state.pose_found ? (state.phase || "-").toUpperCase() : "NO POSE";
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden">
@@ -49,14 +49,14 @@ export default function LiveCoachHub({ running, state, reps, videoRef, canvasRef
             {!running && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-on-surface/40">
                 <span className="material-symbols-outlined text-5xl text-primary/50">videocam</span>
-                <span className="font-label-sm uppercase tracking-widest">Feed offline — start a session</span>
+                <span className="font-label-sm uppercase tracking-widest">Feed offline - start a session</span>
               </div>
             )}
 
             {/* Technical HUD */}
             <div className="absolute top-6 left-6 font-label-sm text-primary space-y-1">
-              <div className="opacity-80">STREAM: {running ? "1280 // 15FPS" : "—"}</div>
-              <div className="opacity-80">LATENCY: {latest ? `${Math.round(latest.latency_ms)}ms` : "—"}</div>
+              <div className="opacity-80">STREAM: {running ? "1280 // 15FPS" : "-"}</div>
+              <div className="opacity-80">LATENCY: {latest ? `${Math.round(latest.latency_ms)}ms` : "-"}</div>
               <div className="opacity-80">POSE: {state.pose_found ? "LOCKED" : "SEARCHING"}</div>
             </div>
             <div className="absolute top-6 right-6">
@@ -135,7 +135,7 @@ export default function LiveCoachHub({ running, state, reps, videoRef, canvasRef
           </div>
           <div className="font-body-md text-on-surface/80 leading-relaxed max-w-4xl italic">
             {latest
-              ? `${latest.corrections.join(" · ")} — ${latest.encouragement}`
+              ? `${latest.corrections.join(" · ")} - ${latest.encouragement}`
               : running
                 ? "Get into a pushup position. I'll score each rep and call out corrections in real time."
                 : "Start a session to begin live coaching."}

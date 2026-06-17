@@ -1,4 +1,4 @@
-"""Deepgram TTS for FormIQ — speaks coaching feedback aloud after each rep.
+"""Deepgram TTS for FormIQ - speaks coaching feedback aloud after each rep.
 
 Synthesis goes through Deepgram's REST ``/v1/speak`` endpoint (stable across SDK
 versions). Playback happens on a background thread so the per-rep feedback loop
