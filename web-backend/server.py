@@ -109,3 +109,14 @@ def speak(body: SpeakRequest, request: Request, x_formiq_code: str | None = Head
     if not audio:
         raise HTTPException(status_code=503, detail="TTS unavailable (no Deepgram key).")
     return Response(content=audio, media_type="audio/mpeg")
+
+
+# Serve the built React app from the same service (single-deployment mode).
+# Mounted last so the API routes above take precedence. Set FORMIQ_STATIC_DIR
+# to the built frontend (the Docker image does this); skipped in API-only dev.
+_static_dir = os.getenv("FORMIQ_STATIC_DIR")
+if _static_dir and os.path.isdir(_static_dir):
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount("/", StaticFiles(directory=_static_dir, html=True), name="app")
+

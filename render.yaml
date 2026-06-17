@@ -1,14 +1,12 @@
-# Render Blueprint for the FormIQ cloud API.
-# Deploy: push this repo to GitHub, then on render.com → New → Blueprint →
-# pick this repo. Set the secret env vars (marked sync:false) in the dashboard.
+# Render Blueprint — ONE service: the Docker image serves both the React app
+# and the coach API. Deploy: push to GitHub, then render.com → New → Blueprint
+# → pick this repo, set the secret env vars, deploy. You get a single URL.
 services:
   - type: web
-    name: formiq-api
-    runtime: python
+    name: formiq
+    runtime: docker
     plan: free
-    rootDir: web-backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
       - key: ANTHROPIC_API_KEY
@@ -17,13 +15,9 @@ services:
         sync: false
       - key: FORMIQ_ACCESS_CODE
         sync: false
-      - key: FORMIQ_ALLOWED_ORIGINS
-        sync: false # e.g. https://your-app.vercel.app
       - key: FORMIQ_REP_MODEL
         value: claude-haiku-4-5
       - key: FORMIQ_SUMMARY_MODEL
         value: claude-opus-4-8
       - key: FORMIQ_RATE_LIMIT_PER_MIN
         value: "40"
-      - key: PYTHON_VERSION
-        value: "3.11.9"
